@@ -80,7 +80,7 @@ def _photo_from_data_url(data_url, max_w=165*mm, max_h=85*mm):
         return None
 
 def _build_pdf(project, mode="client"):
-    out = BytesIO(|)
+    out = BytesIO()
     doc = SimpleDocTemplate(out, pagesize=A4, rightMargin=14*mm, leftMargin=14*mm, topMargin=15*mm, bottomMargin=15*mm)
     styles = getSampleStyleSheet()
     title = ParagraphStyle("TitleX", parent=styles["Title"], fontName="Helvetica-Bold", fontSize=20, leading=23, textColor=colors.HexColor("#0B2239"), spaceAfter=8)
@@ -127,7 +127,7 @@ def _build_pdf(project, mode="client"):
             img = _photo_from_data_url(data_url)
             if img:
                 block += [Spacer(1, 2*mm), img]
-        a = z.get("analysis")
+        a = z.get("assessment") or z.get("analysis")
         if a:
             block += [
                 Spacer(1, 2*mm),
@@ -147,7 +147,7 @@ def _build_pdf(project, mode="client"):
                 block += [_p("Pendientes de validación", label), _p(pendientes, body)]
         else:
             block += [_p("Análisis IA pendiente.", small)]
-        story += [KeepTogether(block), Spacer(1, 4*mm)]
+        story += block + [Spacer(1, 4*mm)]
 
     materials = project.get("materials") or []
     if materials:
